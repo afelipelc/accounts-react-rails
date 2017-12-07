@@ -19,7 +19,7 @@
       className: 'form-inline'
       onSubmit: @handleSubmit
       React.DOM.div
-        className: 'form-group'
+        className: 'form-group form-item'
         React.DOM.input
           type: 'date'
           className: 'form-control'
@@ -28,7 +28,7 @@
           value: @state.date
           onChange: @handleChange
       React.DOM.div
-        className: 'form-group'
+        className: 'form-group form-item'
         React.DOM.input
           type: 'text'
           className: 'form-control'
@@ -37,7 +37,7 @@
           value: @state.title
           onChange: @handleChange
       React.DOM.div
-        className: 'form-group'
+        className: 'form-group form-item'
         React.DOM.input
           type: 'number'
           className: 'form-control'

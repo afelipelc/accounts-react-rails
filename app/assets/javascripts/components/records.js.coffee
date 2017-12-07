@@ -8,12 +8,32 @@
     records = @state.records.slice() #El método slice no modifica. Devuelve una copia plana (shallow copy) de los elementos especificados del array original.
     records.push record
     @setState records: records #reasignar la lista registros
+  #display panels with general info
+  credits: -> #Calcula la suma de todos los saldos positivos (abonos)
+    credits = @state.records.filter (val) -> val.amount > 0
+    credits.reduce ((prev, curr) ->  #El método reduce() aplica una función a un acumulador y a cada valor de un array (de izquierda a derecha) para reducirlo a un único valor.
+      prev + parseFloat(curr.amount)
+    ), 0
+  debits: -> #Calcula la suma de todos los saldos negativos (debits o cargos)
+    debits = @state.records.filter (val) -> val.amount < 0
+    debits.reduce ((prev, curr) ->  #El método reduce() aplica una función a un acumulador y a cada valor de un array (de izquierda a derecha) para reducirlo a un único valor.
+      prev + parseFloat(curr.amount)
+    ), 0
+  balance: -> #método que devuelve la suma del resultado de los métodos
+    @debits() + @credits()
   render: ->  #todo componente React lleva un método render()
     React.DOM.div  #React.DOM.html_tag crea un nuevo nodo, ésto es como HAML donde vamos creando el árbol
       className: 'records'
       React.DOM.h2
         className: 'title'
         'Records'
+      #mostrar los páneles de información general
+      React.DOM.div
+        className: 'row'
+        #Create elements sending props:values (go to AmountBox to see props used)
+        React.createElement AmountBox, type: 'success', amount: @credits(), text: 'Credit'
+        React.createElement AmountBox, type: 'danger', amount: @debits(), text: 'Debit'
+        React.createElement AmountBox, type: 'info', amount: @balance(), text: 'Balance'
       #incovar al form para que se muestre arriba de la tabla
       React.createElement RecordForm, handleNewRecord: @addRecord #pasar handleNewRecord como parte de @props del form, handleNewRecord es la referencia al método responsable de agregar el nuevo registro
       React.DOM.hr null #genera un <hr>
