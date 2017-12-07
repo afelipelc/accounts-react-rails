@@ -5,8 +5,9 @@
   getDefaultProps: -> 
     records: [] #si no hay datos iniciales entonces inicializar la propiedad, records es un array de registros
   addRecord: (record) -> #método que agregará el nuevo registro a la tabla
-    records = @state.records.slice() #El método slice no modifica. Devuelve una copia plana (shallow copy) de los elementos especificados del array original.
-    records.push record
+    #records = @state.records.slice() #El método slice no modifica. Devuelve una copia plana (shallow copy) de los elementos especificados del array original.
+    #use React.addons
+    records = React.addons.update(@state.records,{ $push: [record] } )
     @setState records: records #reasignar la lista registros
   #display panels with general info
   credits: -> #Calcula la suma de todos los saldos positivos (abonos)
@@ -21,6 +22,14 @@
     ), 0
   balance: -> #método que devuelve la suma del resultado de los métodos
     @debits() + @credits()
+  deleteRecord: (record) -> #método que se encargará de eliminar el objeto del array
+    #records = @state.records.slice() #removed after add addons
+    index = @state.records.indexOf record
+    #records.splice index, 1 #El metodo splice() cambia el contenido de un array eliminando elementos existentes y/o agregando nuevos elementos. array.splice(start, deleteCount, item1, item2, ...)
+    #use React.addons
+    records = React.addons.update(@state.records, { $splice: [[index, 1]] })
+    @replaceState records: records #reemplazar el status de records con el nuevo array
+    #the main difference between setState and replaceState is that the first one will only update one key of the state object, the second one will completely override the current state of the component with whatever new object we send.
   render: ->  #todo componente React lleva un método render()
     React.DOM.div  #React.DOM.html_tag crea un nuevo nodo, ésto es como HAML donde vamos creando el árbol
       className: 'records'
@@ -44,6 +53,7 @@
             React.DOM.th null, 'Date'
             React.DOM.th null, 'Title'
             React.DOM.th null, 'Amount'
+            React.DOM.th null, 'Actions'
         React.DOM.tbody null,
           for record in @state.records  #recorrido del arreglo de registros
-            React.createElement Record, key: record.id, record: record  #invocar a la creación de un nuevo componente que devolverá la estructura de una fila con los datos del registro
+            React.createElement Record, key: record.id, record: record, handleDeleteRecord: @deleteRecord  #invocar a la creación de un nuevo componente(pasandole las props) que devolverá la estructura de una fila con los datos del registro
