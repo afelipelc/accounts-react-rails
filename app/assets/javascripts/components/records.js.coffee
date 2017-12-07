@@ -22,6 +22,10 @@
     ), 0
   balance: -> #método que devuelve la suma del resultado de los métodos
     @debits() + @credits()
+  updateRecord: (record, data) ->
+    index = @state.records.indexOf record
+    records = React.addons.update(@state.records, { $splice: [[index, 1, data]] })
+    @replaceState records: records
   deleteRecord: (record) -> #método que se encargará de eliminar el objeto del array
     #records = @state.records.slice() #removed after add addons
     index = @state.records.indexOf record
@@ -56,4 +60,4 @@
             React.DOM.th null, 'Actions'
         React.DOM.tbody null,
           for record in @state.records  #recorrido del arreglo de registros
-            React.createElement Record, key: record.id, record: record, handleDeleteRecord: @deleteRecord  #invocar a la creación de un nuevo componente(pasandole las props) que devolverá la estructura de una fila con los datos del registro
+            React.createElement Record, key: record.id, record: record, handleDeleteRecord: @deleteRecord, handleEditRecord: @updateRecord  #invocar a la creación de un nuevo componente(pasandole las props) que devolverá la estructura de una fila con los datos del registro
